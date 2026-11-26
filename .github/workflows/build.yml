@@ -1,0 +1,30 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build mod
+        run: |
+          mkdir mdk
+          unzip -q ./*-mdk.zip -d mdk
+          cd "$(dirname "$(find mdk -name gradlew | head -1)")"
+          sed -i 's/^mod_id=.*/mod_id=leekesp/' gradle.properties
+          sed -i 's/^mod_name=.*/mod_name=Leek ESP/' gradle.properties
+          sed -i 's/^mod_group_id=.*/mod_group_id=com.leek.esp/' gradle.properties
+          rm -rf src/main/java/com/example
+          mkdir -p src/main/java/com/leek/esp
+          cp "$GITHUB_WORKSPACE/LeekEsp.java" "$GITHUB_WORKSPACE/EspClient.java" src/main/java/com/leek/esp/
+          chmod +x gradlew
+          ./gradlew build
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp build/libs/*.jar "$GITHUB_WORKSPACE/out/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: leekesp-jar
+          path: out/*.jar
