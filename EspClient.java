@@ -283,7 +283,7 @@ final class XrayClient {
     private static final int RADIUS_H = 24;
     private static final int RADIUS_V = 16;
     private static final int CAP = 3000;
-    private static final int DOUBLE_TAP_TICKS = 8;
+    private static final int DOUBLE_TAP_TICKS = 26;
 
     private static boolean enabled;
     private static boolean sneakPrev;
